@@ -5,14 +5,30 @@ ob_start();
 
 require_once('config.php');
 require_once('config/constants.php');
-require_once 'config/database.php';
+require_once('config/database.php');
 
-// Giả sử dùng Router đơn giản qua biến $_GET['url']
+// Router đơn giản
 $url = isset($_GET['url']) ? $_GET['url'] : 'home';
 
-// Nếu là home thì load giao diện Long Châu
-if ($url == 'home') {
-    require_once 'app/views/home.php';
-} else {
-    echo "Trang 404 hoặc xử lý Controller tại đây";
+// Xử lý routing
+switch ($url) {
+    case 'home':
+    default:
+        require_once 'app/controllers/HomeController.php';
+        $controller = new HomeController();
+        $controller->index();
+        break;
+        
+    // Thêm các route khác ở đây
+    case 'products':
+        // require_once 'app/controllers/ProductController.php';
+        echo "Trang sản phẩm - Đang phát triển";
+        break;
+        
+    case 'cart':
+        // require_once 'app/controllers/CartController.php';
+        echo "Giỏ hàng - Đang phát triển";
+        break;
 }
+
+ob_end_flush();

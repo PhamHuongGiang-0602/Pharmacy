@@ -107,40 +107,24 @@
       <a href="/products" class="see-all">Xem tất cả →</a>
     </div>
     <div class="categories-grid">
-
-      <a href="/products?category=thuoc-ke-don" class="category-card cat-red">
-        <div class="cat-icon">💊</div>
-        <span>Thuốc kê đơn</span>
-      </a>
-      <a href="/products?category=thuoc-otc" class="category-card cat-orange">
-        <div class="cat-icon">🧴</div>
-        <span>Thuốc OTC</span>
-      </a>
-      <a href="/products?category=vitamin" class="category-card cat-yellow">
-        <div class="cat-icon">🍊</div>
-        <span>Vitamin & Khoáng chất</span>
-      </a>
-      <a href="/products?category=cham-soc-da" class="category-card cat-pink">
-        <div class="cat-icon">✨</div>
-        <span>Chăm sóc da</span>
-      </a>
-      <a href="/products?category=me-va-be" class="category-card cat-purple">
-        <div class="cat-icon">👶</div>
-        <span>Mẹ & Bé</span>
-      </a>
-      <a href="/products?category=thiet-bi-y-te" class="category-card cat-blue">
-        <div class="cat-icon">🩺</div>
-        <span>Thiết bị y tế</span>
-      </a>
-      <a href="/products?category=thuc-pham-chuc-nang" class="category-card cat-green">
-        <div class="cat-icon">🌿</div>
-        <span>Thực phẩm chức năng</span>
-      </a>
-      <a href="/products?category=cham-soc-toc" class="category-card cat-teal">
-        <div class="cat-icon">💆</div>
-        <span>Chăm sóc tóc</span>
-      </a>
-
+      <?php if (!empty($categories)): ?>
+        <?php foreach ($categories as $cat): 
+          // Mapping icon và màu cho danh mục
+          $icons = [
+            'Thuốc kê đơn' => ['icon' => '💊', 'class' => 'cat-red'],
+            'Thuốc không kê đơn' => ['icon' => '🧴', 'class' => 'cat-orange'],
+            'Thực phẩm chức năng' => ['icon' => '🌿', 'class' => 'cat-green'],
+            'Chăm sóc cá nhân' => ['icon' => '✨', 'class' => 'cat-pink'],
+            'Thiết bị y tế' => ['icon' => '🩺', 'class' => 'cat-blue'],
+          ];
+          $catInfo = $icons[$cat['category_name']] ?? ['icon' => '📦', 'class' => 'cat-gray'];
+        ?>
+        <a href="/products?category=<?= $cat['category_id'] ?>" class="category-card <?= $catInfo['class'] ?>">
+          <div class="cat-icon"><?= $catInfo['icon'] ?></div>
+          <span><?= htmlspecialchars($cat['category_name']) ?></span>
+        </a>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
 </section>
@@ -178,61 +162,51 @@
     <div class="section-header">
       <h2 class="section-title">Sản phẩm nổi bật</h2>
       <div class="product-tabs">
-        <button class="tab-btn active" data-tab="hot">🔥 Bán chạy</button>
-        <button class="tab-btn" data-tab="sale">💸 Khuyến mãi</button>
-        <button class="tab-btn" data-tab="new">🆕 Mới nhất</button>
+        <button class="tab-btn active" data-tab="hot" onclick="switchTab('hot')">🔥 Bán chạy</button>
+        <button class="tab-btn" data-tab="sale" onclick="switchTab('sale')">💸 Khuyến mãi</button>
+        <button class="tab-btn" data-tab="new" onclick="switchTab('new')">🆕 Mới nhất</button>
       </div>
     </div>
 
-    <div class="products-grid" id="productsGrid">
-      <?php
-      // Dữ liệu mẫu khi chưa có controller truyền vào
-      $sampleProducts = [
-        ['id'=>1,'name'=>'Vitamin C 1000mg Blackmores','price'=>285000,'old_price'=>320000,'img'=>'vitc.jpg','badge'=>'Bán chạy','rating'=>4.8,'reviews'=>1240,'brand'=>'Blackmores'],
-        ['id'=>2,'name'=>'Omega-3 Fish Oil Nature\'s Way','price'=>399000,'old_price'=>450000,'img'=>'omega3.jpg','badge'=>'Sale 20%','rating'=>4.7,'reviews'=>980,'brand'=>'Nature\'s Way'],
-        ['id'=>3,'name'=>'Siro Ho Prospan 100ml','price'=>125000,'old_price'=>null,'img'=>'prospan.jpg','badge'=>'','rating'=>4.9,'reviews'=>2100,'brand'=>'Engelhard'],
-        ['id'=>4,'name'=>'Kem dưỡng ẩm Eucerin 50ml','price'=>320000,'old_price'=>380000,'img'=>'eucerin.jpg','badge'=>'Hot','rating'=>4.6,'reviews'=>750,'brand'=>'Eucerin'],
-        ['id'=>5,'name'=>'Canxi D3 Calcium Sandoz','price'=>168000,'old_price'=>null,'img'=>'ca-d3.jpg','badge'=>'Mới','rating'=>4.5,'reviews'=>430,'brand'=>'Sandoz'],
-        ['id'=>6,'name'=>'Kẽm Zinc Gluconate OPV','price'=>95000,'old_price'=>120000,'img'=>'zinc.jpg','badge'=>'Sale 21%','rating'=>4.7,'reviews'=>620,'brand'=>'OPV'],
-        ['id'=>7,'name'=>'Panadol Extra 500mg (24 viên)','price'=>48000,'old_price'=>null,'img'=>'panadol.jpg','badge'=>'','rating'=>4.8,'reviews'=>3200,'brand'=>'GSK'],
-        ['id'=>8,'name'=>'Kem chống nắng La Roche SPF50+','price'=>560000,'old_price'=>650000,'img'=>'larocheposay.jpg','badge'=>'Hot','rating'=>4.9,'reviews'=>1850,'brand'=>'La Roche-Posay'],
-      ];
-      $products = $featuredProducts ?? $sampleProducts;
-      foreach ($products as $p): 
-        $discount = $p['old_price'] ? round((1 - $p['price']/$p['old_price'])*100) : 0;
+    <!-- Tab Bán chạy -->
+    <div class="products-grid tab-content" id="tab-hot" style="display: grid;">
+      <?php foreach ($bestSellers as $p): 
+        $discount = ($p['old_price'] && $p['old_price'] > $p['current_price']) 
+                    ? round((1 - $p['current_price']/$p['old_price'])*100) : 0;
       ?>
-      <div class="product-card" data-id="<?= $p['id'] ?>">
+      <div class="product-card" data-id="<?= $p['product_id'] ?>">
         <?php if (!empty($p['badge'])): ?>
-          <span class="product-badge <?= str_contains($p['badge'],'Sale')||str_contains($p['badge'],'%') ? 'badge-sale' : (str_contains($p['badge'],'Mới') ? 'badge-new' : 'badge-hot') ?>"><?= htmlspecialchars($p['badge']) ?></span>
+          <span class="product-badge <?= str_contains($p['badge'],'Sale') ? 'badge-sale' : 'badge-hot' ?>">
+            <?= htmlspecialchars($p['badge']) ?>
+          </span>
         <?php endif; ?>
         <?php if ($discount > 0): ?>
           <span class="product-discount">-<?= $discount ?>%</span>
         <?php endif; ?>
 
         <div class="product-img-wrap">
-          <img src="/public/images/products/<?= htmlspecialchars($p['img']) ?>"
-               alt="<?= htmlspecialchars($p['name']) ?>"
-               onerror="this.src='/public/images/placeholder.png'">
+          <img src="/Pharmacy/public/img/products/<?= htmlspecialchars($p['image_url'] ?? 'placeholder.png') ?>"
+               alt="<?= htmlspecialchars($p['product_name']) ?>"
+               onerror="this.src='/public/img/placeholder.png'">
           <div class="product-actions-hover">
-            <button class="btn-quick-add" onclick="addToCart(<?= $p['id'] ?>)">
+            <button class="btn-quick-add" onclick="addToCart(<?= $p['product_id'] ?>)">
               🛒 Thêm vào giỏ
             </button>
-            <a href="/product/<?= $p['id'] ?>" class="btn-view">Xem chi tiết</a>
           </div>
         </div>
 
         <div class="product-info">
-          <span class="product-brand"><?= htmlspecialchars($p['brand']) ?></span>
+          <span class="product-brand"><?= htmlspecialchars($p['brand'] ?? 'N/A') ?></span>
           <h3 class="product-name">
-            <a href="/product/<?= $p['id'] ?>"><?= htmlspecialchars($p['name']) ?></a>
+            <a href="/product/<?= $p['product_id'] ?>"><?= htmlspecialchars($p['product_name']) ?></a>
           </h3>
           <div class="product-rating">
-            <span class="stars"><?= str_repeat('★', floor($p['rating'])) ?><?= $p['rating'] - floor($p['rating']) >= 0.5 ? '½' : '' ?></span>
-            <span class="review-count">(<?= number_format($p['reviews']) ?>)</span>
+            <span class="stars"><?= str_repeat('★', floor($p['rating'] ?? 4.5)) ?></span>
+            <span class="review-count">(<?= number_format($p['reviews'] ?? 0) ?>)</span>
           </div>
           <div class="product-price-row">
-            <span class="price-current"><?= number_format($p['price']) ?>đ</span>
-            <?php if ($p['old_price']): ?>
+            <span class="price-current"><?= number_format($p['current_price']) ?>đ</span>
+            <?php if ($p['old_price'] && $p['old_price'] > $p['current_price']): ?>
               <span class="price-old"><?= number_format($p['old_price']) ?>đ</span>
             <?php endif; ?>
           </div>
@@ -241,11 +215,44 @@
       <?php endforeach; ?>
     </div>
 
-    <div class="load-more-wrap">
-      <a href="/products" class="btn btn-load-more">Xem thêm sản phẩm</a>
+    <!-- Tab Khuyến mãi -->
+    <div class="products-grid tab-content" id="tab-sale" style="display: none;">
+      <?php foreach ($saleProducts as $p): 
+        $discount = round((1 - $p['current_price']/$p['old_price'])*100);
+      ?>
+      <!-- Same structure as above -->
+      <div class="product-card" data-id="<?= $p['product_id'] ?>">
+        <span class="product-badge badge-sale"><?= htmlspecialchars($p['badge']) ?></span>
+        <span class="product-discount">-<?= $discount ?>%</span>
+        <!-- ... rest of product card ... -->
+      </div>
+      <?php endforeach; ?>
+    </div>
+
+    <!-- Tab Mới nhất -->
+    <div class="products-grid tab-content" id="tab-new" style="display: none;">
+      <?php foreach ($newProducts as $p): ?>
+      <div class="product-card" data-id="<?= $p['product_id'] ?>">
+        <span class="product-badge badge-new">Mới</span>
+        <!-- ... rest of product card ... -->
+      </div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
+
+<script>
+// Chuyển đổi tab sản phẩm
+function switchTab(tab) {
+  // Ẩn tất cả tabs
+  document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  
+  // Hiện tab được chọn
+  document.getElementById('tab-' + tab).style.display = 'grid';
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+}
+</script>
 
 <!-- ===== THƯƠNG HIỆU ===== -->
 <section class="section brands-section">

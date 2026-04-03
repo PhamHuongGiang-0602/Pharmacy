@@ -1,5 +1,6 @@
 <?php
 // app/models/UserModel.php
+
 class UserModel extends BaseModel {
     public function checkEmailExists($email) {
         $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
