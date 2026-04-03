@@ -1,0 +1,83 @@
+/* ===================================================
+   responsive.css — Media Queries
+   Breakpoints: 1024px · 768px · 480px
+   =================================================== */
+
+/* ===== TABLET (≤ 1024px) ===== */
+@media (max-width: 1024px) {
+  .products-grid      { grid-template-columns: repeat(3, 1fr); }
+  .categories-grid    { grid-template-columns: repeat(4, 1fr); }
+  .footer-grid        { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .hero-content       { margin-left: 40px; }
+  .hero-content h1    { font-size: 1.7rem; }
+}
+
+/* ===== MOBILE (≤ 768px) ===== */
+@media (max-width: 768px) {
+  /* Topbar */
+  .topbar-right { display: none; }
+
+  /* Header */
+  .header-inner {
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+  .header-right { display: none; }
+
+  /* Search */
+  .search-btn   { display: none; }
+  .search-bar   { border-radius: 8px; }
+  .search-input { border-radius: 8px; padding: 10px 14px; }
+
+  /* Categories */
+  .categories-grid { grid-template-columns: repeat(4, 1fr); }
+
+  /* Products */
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  /* Trust bar */
+  .trust-grid { grid-template-columns: repeat(2, 1fr); }
+  .trust-item:nth-child(2),
+  .trust-item:nth-child(4) { border-right: none; }
+
+  /* Hero */
+  .hero-banner    { height: 280px; }
+  .hero-content   { margin-left: 20px; }
+  .hero-content h1 { font-size: 1.3rem; }
+  .hero-badge     { display: none; }
+
+  /* Promo strip */
+  .promo-strip-grid { grid-template-columns: 1fr; }
+
+  /* Blog */
+  .blog-grid { grid-template-columns: 1fr; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr; }
+
+  /* Mega menu (hide on mobile) */
+  .mega-menu { display: none !important; }
+
+  /* Chat float */
+  .chat-label { display: none; }
+  .chat-float { padding: 12px; border-radius: 50%; }
+}
+
+/* ===== SMALL MOBILE (≤ 480px) ===== */
+@media (max-width: 480px) {
+  /* Categories */
+  .categories-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .category-card  { padding: 14px 6px; font-size: .72rem; }
+  .cat-icon       { font-size: 1.5rem; }
+
+  /* Products */
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* Sections */
+  .section { padding: 28px 0; }
+
+  /* Hero */
+  .hero-content h1 { font-size: 1.1rem; }
+  .hero-actions .btn-outline { display: none; }
+}

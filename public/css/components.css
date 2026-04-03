@@ -1,0 +1,82 @@
+/* ===================================================
+   components.css — Shared UI Components
+   Toast · Back-to-Top · Chat Float · Overlay
+   =================================================== */
+
+/* ===== BACK TO TOP ===== */
+.back-to-top {
+  position: fixed;
+  bottom: 90px;
+  right: 22px;
+  width: 44px;
+  height: 44px;
+  background: var(--green);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 16px rgba(0,144,74,.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--transition);
+  z-index: 800;
+  border: none;
+  cursor: pointer;
+}
+.back-to-top.visible { opacity: 1; pointer-events: auto; }
+.back-to-top:hover   { background: var(--green-dark); transform: translateY(-3px); }
+
+/* ===== FLOATING CHAT BUTTON ===== */
+.chat-float {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  background: var(--green);
+  color: #fff;
+  border-radius: 50px;
+  padding: 12px 20px 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: .85rem;
+  box-shadow: 0 6px 20px rgba(0,144,74,.5);
+  z-index: 800;
+  text-decoration: none;
+  animation: floatBounce 3s ease-in-out infinite;
+  transition: background var(--transition), transform var(--transition);
+}
+.chat-float:hover { background: var(--green-dark); transform: scale(1.05); }
+.chat-icon        { font-size: 1.2rem; }
+
+@keyframes floatBounce {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
+
+/* ===== TOAST NOTIFICATION ===== */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1a2e1a;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .88rem;
+  font-weight: 500;
+  z-index: 9000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast-icon { font-size: 1rem; }

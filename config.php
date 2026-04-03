@@ -7,6 +7,8 @@ const _valid = true;
 const _DEBUG = true;
 
 // thiết lập host
-define('_HOST_URL','http://'.$_SERVER['HTTP_HOST'].'/Pharmacity');
+//define('_HOST_URL','http://'.$_SERVER['HTTP_HOST'].'/Pharmacy');
 //echo _HOST_URL;
+// config.php
+
 ?>

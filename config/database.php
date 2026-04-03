@@ -1,9 +1,7 @@
 <?php
 
-return [
-    'host'    => 'localhost',
-    'db_name' => 'pharma_db', 
-    'user'    => 'root',        
-    'pass'    => '',            
-    'charset' => 'utf8mb4'
-];
+// config/database.php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'pharma_db'); 

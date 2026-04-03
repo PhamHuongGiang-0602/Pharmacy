@@ -1,0 +1,89 @@
+/* ===================================================
+   buttons.css — Buttons & CTAs
+   =================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: .88rem;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: all var(--transition);
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+}
+.btn-primary:hover {
+  background: var(--green-dark);
+  border-color: var(--green-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,144,74,.35);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255,255,255,.7);
+}
+.btn-outline:hover {
+  background: rgba(255,255,255,.15);
+  border-color: #fff;
+}
+
+.btn-white-outline {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,.6);
+  padding: 8px 18px;
+  font-size: .82rem;
+}
+.btn-white-outline:hover { background: rgba(255,255,255,.2); }
+
+.btn-load-more {
+  background: #fff;
+  color: var(--green);
+  border: 2px solid var(--green);
+  padding: 11px 40px;
+  font-size: .9rem;
+}
+.btn-load-more:hover { background: var(--green); color: #fff; }
+
+/* Quick-add & View (product card hover) */
+.btn-quick-add {
+  width: 100%;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-main);
+  transition: background var(--transition);
+}
+.btn-quick-add:hover { background: var(--green-dark); }
+
+.btn-view {
+  width: 100%;
+  background: rgba(255,255,255,.9);
+  color: var(--text-main);
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: .78rem;
+  font-weight: 500;
+  text-align: center;
+  font-family: var(--font-main);
+  transition: background var(--transition);
+  display: block;
+}
+.btn-view:hover { background: #fff; }
