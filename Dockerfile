@@ -1,11 +1,13 @@
 FROM php:8.2-cli
 
-# 1. Cài đặt các thư viện hệ thống và Driver PDO MySQL
+# Cài đặt Driver cho cả MySQL (nếu cần dùng sau này) và PostgreSQL
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
-    libmariadb-dev \
-    && docker-php-ext-install zip pdo pdo_mysql
+    libpq-dev \
+    && docker-php-ext-install zip pdo pdo_mysql pdo_pgsql
+
+# ... các phần còn lại giữ nguyên
 
 # 2. Cài đặt Composer từ image chính thức
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
