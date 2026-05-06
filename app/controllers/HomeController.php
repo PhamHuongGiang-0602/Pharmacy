@@ -1,8 +1,13 @@
 <?php
+// Sử dụng đường dẫn tuyệt đối dựa trên vị trí file hiện tại
 require_once __DIR__ . '/BaseController.php';
-require_once __DIR__ . '/../Models/ProductModel.php';
+
+// KIỂM TRA KỸ: Nếu thư mục của bạn trên GitHub là 'models' (viết thường) 
+// thì bạn PHẢI sửa chữ 'Models' dưới đây thành 'models'.
+require_once __DIR__ . '/../models/ProductModel.php'; 
 
 class HomeController extends BaseController {
+    // ... giữ nguyên phần code bên dưới
     private $productModel;
     
     public function __construct() {
