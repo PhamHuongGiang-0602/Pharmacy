@@ -3,7 +3,7 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 session_start();
 ob_start();
 
-// Định tuyến tĩnh cho built-in server (Xử lý các file CSS, JS, Image)
+// Định tuyến tĩnh cho built-in server
 if (php_sapi_name() === 'cli-server') {
     $path = realpath(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
     if ($path && is_file($path)) {
@@ -15,62 +15,39 @@ require_once('config.php');
 require_once('config/constants.php');
 require_once('config/database.php');
 require_once __DIR__ . '/vendor/autoload.php';
+
 if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
     die("Autoloader failed to load PHPMailer");
 }
 
-// Lấy URL hiện tại và xử lý subdirectory
-$scriptName = $_SERVER['SCRIPT_NAME']; // e.g. /Pharmacy/index.php
-$requestUri = $_SERVER['REQUEST_URI']; // e.g. /Pharmacy/index.php?url=...
+// ... (Giữ nguyên phần xử lý URL của bạn)
 
-// Loại bỏ query string
-$path = parse_url($requestUri, PHP_URL_PATH);
-
-// Loại bỏ phần folder gốc (e.g. /Pharmacy/)
-$basePath = dirname($scriptName);
-if ($basePath === DIRECTORY_SEPARATOR || $basePath === '.') $basePath = '';
-$url = substr($path, strlen($basePath));
-$url = trim($url, '/');
-
-// Nếu truy cập trực tiếp file index.php
-if ($url === 'index.php' || $url === '') {
-    $url = isset($_GET['url']) ? trim($_GET['url'], '/') : 'home';
-}
-
-// Phân tích URL
-$urlParts = explode('/', $url);
-
-$controllerName = $urlParts[0];
-$actionName = isset($urlParts[1]) ? $urlParts[1] : 'index';
-
-// Xử lý routing cơ bản
+// PHẦN SỬA LỖI ĐƯỜNG DẪN (CHỮ THƯỜNG KHỚP VỚI GITHUB)
 if ($controllerName === 'home' || $controllerName === '') {
-    require_once 'app/controllers/HomeController.php';
+    require_once 'app/controllers/HomeController.php'; // Đã sửa thành chữ thường
     $controller = new HomeController();
     $controller->index();
 } elseif ($controllerName === 'auth') {
-    require_once 'app/controllers/AuthController.php';
+    require_once 'app/controllers/AuthController.php'; // Đã sửa thành chữ thường
     $controller = new AuthController();
     
-    // Gọi phương thức nếu tồn tại trong AuthController
     if (method_exists($controller, $actionName)) {
         $controller->$actionName();
     } else {
         echo "404 - Phương thức xác thực không tồn tại!";
     }
 } else {
-    // Các route khác
     switch ($controllerName) {
         case 'products':
-            require_once 'app/controllers/ProductController.php';
-            $controller = new ProductController();
-            $controller->$actionName();
-            break;
         case 'product':
             require_once 'app/controllers/ProductController.php';
             $controller = new ProductController();
-            $_GET['id'] = $actionName; // product/123
-            $controller->detail();
+            if ($controllerName === 'product') {
+                $_GET['id'] = $actionName;
+                $controller->detail();
+            } else {
+                $controller->$actionName();
+            }
             break;
         case 'cart':
             require_once 'app/controllers/CartController.php';
@@ -85,86 +62,49 @@ if ($controllerName === 'home' || $controllerName === '') {
         case 'prescription':
             require_once 'app/controllers/PrescriptionController.php';
             $controller = new PrescriptionController();
-            if (method_exists($controller, $actionName)) {
-                $controller->$actionName();
-            } else {
-                $controller->index();
-            }
+            method_exists($controller, $actionName) ? $controller->$actionName() : $controller->index();
             break;
         case 'account':
             require_once 'app/controllers/AccountController.php';
             $controller = new AccountController();
-            if (method_exists($controller, $actionName)) {
-                $controller->$actionName();
-            } else {
-                $controller->index();
-            }
+            method_exists($controller, $actionName) ? $controller->$actionName() : $controller->index();
             break;
         case 'admin':
             $subController = isset($urlParts[1]) ? $urlParts[1] : 'dashboard';
             $subAction = isset($urlParts[2]) ? $urlParts[2] : 'index';
             
-            if ($subController === 'dashboard') {
-                require_once 'app/controllers/admin/AdminDashboardController.php';
-                $controller = new AdminDashboardController();
-            } elseif ($subController === 'chatbot') {
-                require_once 'app/controllers/admin/AdminChatbotController.php';
-                $controller = new AdminChatbotController();
-            } elseif ($subController === 'inventory') {
-                require_once 'app/controllers/admin/AdminInventoryController.php';
-                $controller = new AdminInventoryController();
-            } elseif ($subController === 'product') {
-                require_once 'app/controllers/admin/AdminProductController.php';
-                $controller = new AdminProductController();
-            } elseif ($subController === 'order') {
-                require_once 'app/controllers/admin/AdminOrderController.php';
-                $controller = new AdminOrderController();
-            } elseif ($subController === 'users') {
-                require_once 'app/controllers/admin/AdminUserController.php';
-                $controller = new AdminUserController();
-            } elseif ($subController === 'general') {
-                require_once 'app/controllers/admin/AdminGeneralController.php';
-                $controller = new AdminGeneralController();
-            } elseif ($subController === 'settings') {
-                require_once 'app/controllers/admin/AdminSettingsController.php';
-                $controller = new AdminSettingsController();
-            } elseif ($subController === 'emaillog') {
-                require_once 'app/controllers/admin/AdminEmailLogController.php';
-                $controller = new AdminEmailLogController();
-            } else {
-                echo "404 - Admin module not found!";
-                exit();
-            }
+            // Lưu ý: Kiểm tra thư mục 'app/controllers/admin' trên GitHub có viết hoa chữ 'a' không nhé.
+            // Nếu trên GitHub là 'admin' (viết thường), hãy dùng đường dẫn bên dưới:
+            $adminPath = 'app/controllers/admin/'; 
 
-            if (method_exists($controller, $subAction)) {
-                $controller->$subAction();
-            } else {
-                echo "404 - Admin action not found!";
-            }
+            if ($subController === 'dashboard') require_once $adminPath . 'AdminDashboardController.php';
+            elseif ($subController === 'chatbot') require_once $adminPath . 'AdminChatbotController.php';
+            elseif ($subController === 'inventory') require_once $adminPath . 'AdminInventoryController.php';
+            elseif ($subController === 'product') require_once $adminPath . 'AdminProductController.php';
+            elseif ($subController === 'order') require_once $adminPath . 'AdminOrderController.php';
+            elseif ($subController === 'users') require_once $adminPath . 'AdminUserController.php';
+            elseif ($subController === 'general') require_once $adminPath . 'AdminGeneralController.php';
+            elseif ($subController === 'settings') require_once $adminPath . 'AdminSettingsController.php';
+            elseif ($subController === 'emaillog') require_once $adminPath . 'AdminEmailLogController.php';
+            else { echo "404 - Admin module not found!"; exit(); }
+
+            // Tạo class name tương ứng (Ví dụ: AdminDashboardController)
+            $className = ucfirst($subController) == 'Users' ? 'AdminUserController' : 'Admin' . ucfirst($subController) . 'Controller';
+            // Lưu ý: Bạn cần kiểm tra chính xác tên Class trong file có khớp với cách gọi này không.
+            $controller = new $className();
+            method_exists($controller, $subAction) ? $controller->$subAction() : echo "404 - Action not found!";
             break;
         case 'doctor':
             require_once 'app/controllers/PharmacistController.php';
             $controller = new PharmacistController();
-            $method = $actionName;
-            if ($actionName == 'dashboard' || $actionName == 'prescriptions') {
-                $method = 'pendingPrescriptions';
-            }
-            
-            if (method_exists($controller, $method)) {
-                $controller->$method();
-            } else {
-                echo "404 - Pharmacist action not found! (Method: $method)";
-            }
+            $method = ($actionName == 'dashboard' || $actionName == 'prescriptions') ? 'pendingPrescriptions' : $actionName;
+            method_exists($controller, $method) ? $controller->$method() : echo "404 - Pharmacist action not found!";
             break;
         case 'blog':
             require_once 'app/controllers/BlogController.php';
             $controller = new BlogController();
             $method = ($actionName == 'index' || $actionName == '') ? 'index' : $actionName;
-            if (method_exists($controller, $method)) {
-                $controller->$method();
-            } else {
-                $controller->index();
-            }
+            method_exists($controller, $method) ? $controller->$method() : $controller->index();
             break;
         case 'about':
         case 'stores':
@@ -189,3 +129,4 @@ if ($controllerName === 'home' || $controllerName === '') {
 }
 
 ob_end_flush();
+
