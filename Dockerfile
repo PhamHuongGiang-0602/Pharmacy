@@ -1,25 +1,17 @@
-FROM php:8.2-cli
+FROM php:8.2-apache
 
-# Cài đặt Driver cho cả MySQL (nếu cần dùng sau này) và PostgreSQL
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    zip \
-    libpq-dev \
-    && docker-php-ext-install zip pdo pdo_mysql pdo_pgsql
+# Cài đặt thư viện cần thiết cho Postgres
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql
 
-# ... các phần còn lại giữ nguyên
+# Copy code vào container
+COPY . /var/www/html/
 
-# 2. Cài đặt Composer từ image chính thức
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Cấp quyền và kích hoạt mod_rewrite cho Apache
+RUN chown -R www-data:www-data /var/www/html \
+    && a2enmod rewrite
 
-# 3. Thiết lập thư mục làm việc trong container
-WORKDIR /app
-
-# 4. Copy toàn bộ code vào trong container
-COPY . .
-
-# 5. Cài đặt các thư viện dựa trên file composer.json
-RUN composer install --no-interaction --optimize-autoloader
+EXPOSE 80
 
 # 6. Mở port 8080 để Render có thể truy cập
 EXPOSE 8080
