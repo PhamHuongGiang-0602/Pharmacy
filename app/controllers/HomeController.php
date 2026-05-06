@@ -1,8 +1,11 @@
 <?php
 require_once __DIR__ . '/BaseController.php';
-require_once __DIR__ . '/../Models/ProductModel.php';
+
+// ĐÃ SỬA: Thay 'Models' thành 'models'
+require_once __DIR__ . '/../models/ProductModel.php'; 
 
 class HomeController extends BaseController {
+    // ... giữ nguyên phần code bên dưới
     private $productModel;
     
     public function __construct() {
