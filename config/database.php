@@ -11,7 +11,8 @@ try {
     $pdo = new PDO($dsn, DB_USER, DB_PASS, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+        PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt',
     ]);
 } catch (PDOException $e) {
-    die("Loi ket noi MySQL: " . $e->getMessage());
+    die("Chi tiet loi: " . $e->getMessage());
 }
