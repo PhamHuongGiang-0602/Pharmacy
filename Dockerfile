@@ -1,20 +1,21 @@
 FROM php:8.2-apache
 
-# Cài đặt thư viện cần thiết cho Postgres
-RUN apt-get update && apt-get install -y libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql
+# 1. Cài đặt các thư viện cần thiết và driver MySQL (pdo_mysql)
+RUN apt-get update && apt-get install -y \
+    libmariadb-dev \
+    && docker-php-ext-install pdo pdo_mysql
 
-# Copy code vào container
+# 2. Copy toàn bộ mã nguồn vào container
 COPY . /var/www/html/
 
-# Cấp quyền và kích hoạt mod_rewrite cho Apache
+# 3. Cấp quyền cho thư mục webs
 RUN chown -R www-data:www-data /var/www/html \
     && a2enmod rewrite
 
-EXPOSE 80
-
-# 6. Mở port 8080 để Render có thể truy cập
+# 4. Mở port (Render thường dùng 8080 hoặc 10000)
 EXPOSE 8080
 
-# 7. LỆNH CHẠY CHÍNH
-CMD ["php", "-S", "0.0.0.0:8080", "index.php"]
+# 5. LỆNH CHẠY CHÍNH
+# Lưu ý: Nếu bạn dùng Apache (FROM php:8.2-apache) thì không nên dùng php -S.
+# Hãy để Apache tự chạy bằng cách dùng lệnh mặc định của image:
+CMD ["apache2-foreground"]
